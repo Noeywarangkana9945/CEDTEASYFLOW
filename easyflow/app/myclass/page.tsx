@@ -7,7 +7,7 @@ import Navbar from '@/components/Navbar';
 import ClassCard from './_components/ClassCard';
 import ClassCard_Other from './_components/ClassCard_Other';
 
-function Class() {
+function Myclass() {
   const [isModalOpen, setIsModalOpen] = useState(false); // State สำหรับควบคุม modal
 
   const classes = [
@@ -120,4 +120,4 @@ function Class() {
   );
 }
 
-export default Class;
+export default Myclass;
