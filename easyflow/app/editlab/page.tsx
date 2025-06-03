@@ -10,7 +10,7 @@ interface TestCase {
   output: string;
 }
 
-function Createlab() {
+function Editlab() {
   // State สำหรับ test cases
   const [testCases, setTestCases] = useState<TestCase[]>([
     { input: "", output: "" },
@@ -29,14 +29,14 @@ function Createlab() {
     setTestCases(updatedTestCases);
   };
 
-  // Handler สำหรับปุ่ม Cancel และ Create
+  // Handler สำหรับปุ่ม Cancel และ Save
   const handleCancel = () => {
     console.log("Cancel button clicked");
     // เพิ่ม logic เช่น redirect หรือ reset form
   };
 
-  const handleCreate = () => {
-    console.log("Create button clicked", { testCases });
+  const handleSave = () => {
+    console.log("Save button clicked", { testCases });
     // เพิ่ม logic เช่น ส่งข้อมูลไป API
   };
 
@@ -45,13 +45,13 @@ function Createlab() {
       <Navbar />
       <div className="flex h-screen">
         <Sidebar />
-        <div className="flex-1 flex flex-col p-6 md:p-10"> {/* ปรับ padding สำหรับ responsive */}
-          {/* Buttons (Cancel and Create) */}
+        <div className="flex-1 flex flex-col p-6 md:p-10">
+          {/* Buttons (Cancel and Save) */}
           <div className="flex justify-end space-x-4 mb-6">
             <button
               onClick={handleCancel}
-              className="bg-red-500 text-white px-4 py-2 rounded-full flex items-center hover:bg-red-600"
-              aria-label="Cancel creating lab"
+              className="bg-[#D21F3C] text-white px-4 py-2 rounded-full flex items-center hover:bg-[#B81C35]"
+              aria-label="Cancel editing lab"
             >
               <svg
                 className="w-5 h-5 mr-2"
@@ -65,9 +65,9 @@ function Createlab() {
               Cancel
             </button>
             <button
-              onClick={handleCreate}
-              className="bg-blue-600 text-white px-4 py-2 rounded-full flex items-center hover:bg-blue-700"
-              aria-label="Create lab"
+              onClick={handleSave}
+              className="bg-[#2E8B57] text-white px-4 py-2 rounded-full flex items-center hover:bg-[#267347]"
+              aria-label="Save lab changes"
             >
               <svg
                 className="w-5 h-5 mr-2"
@@ -80,16 +80,16 @@ function Createlab() {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth="2"
-                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                  d="M5 13l4 4L19 7"
                 />
               </svg>
-              Create
+              Save
             </button>
           </div>
 
           {/* Title */}
           <h2 className="text-3xl md:text-4xl font-semibold border-b-2 border-gray-300 pb-1 mb-6">
-            Create Lab
+            Edit Lab
           </h2>
 
           {/* Main Content */}
@@ -264,4 +264,4 @@ function Createlab() {
   );
 }
 
-export default Createlab;
+export default Editlab;

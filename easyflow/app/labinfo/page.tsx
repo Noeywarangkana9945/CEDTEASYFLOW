@@ -38,7 +38,7 @@ function Labinfo() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="pt-20 min-h-screen bg-gray-100">
       <Navbar />
       <div className="flex h-screen">
         <Sidebar />

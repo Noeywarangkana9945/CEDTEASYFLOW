@@ -39,7 +39,7 @@ function Classwork() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="pt-20 min-h-screen bg-gray-100">
       <Navbar />
       <div className="flex h-screen">
         <Sidebar />
@@ -74,8 +74,8 @@ function Classwork() {
 
       {/* Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+        <div className="fixed inset-0 bg-gray-900/30 backdrop-blur-md flex items-center justify-center z-[1000]">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-2xl">
             {/* Header */}
             <h2 className="text-2xl font-semibold mb-6">Import MY lab</h2>
 
@@ -99,7 +99,7 @@ function Classwork() {
                   {/* Date Input */}
                   <div className="relative">
                     <input
-                      type="date" // เปลี่ยนเป็น type="date" เพื่อความสะดวก
+                      type="date"
                       className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     <FaCalendarAlt className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5" />
@@ -109,7 +109,7 @@ function Classwork() {
                   <label className="block text-gray-700 mb-1">Time</label>
                   <div className="relative">
                     <input
-                      type="time" // เปลี่ยนเป็น type="time" เพื่อความสะดวก
+                      type="time"
                       className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     <FaClock className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5" />
