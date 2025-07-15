@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Sidebar from "@/components/Sidebar";
 import Navbar from "@/components/Navbar";
+import SymbolSection from "./_components/SymbolSection";
 
 // กำหนดประเภทสำหรับ test case
 interface TestCase {
@@ -27,6 +28,19 @@ function Editlab() {
     const updatedTestCases = [...testCases];
     updatedTestCases[index][field] = value;
     setTestCases(updatedTestCases);
+  };
+
+  // Handler สำหรับการเปลี่ยนแปลงใน SymbolSection
+  const handleSymbolChange = (symbols: {
+    input: number;
+    output: number;
+    declare: number;
+    assign: number;
+    if: number;
+    call: number;
+  }) => {
+    console.log("Symbol counts updated:", symbols);
+    // เพิ่ม logic เช่น อัพเดต state หรือส่งข้อมูลไป API
   };
 
   // Handler สำหรับปุ่ม Cancel และ Save
@@ -169,94 +183,7 @@ function Editlab() {
             </div>
 
             {/* Right Section: Symbol Selection */}
-            <div className="w-full md:w-1/3 bg-white p-4 rounded-lg shadow-md">
-              <h3 className="text-lg font-medium text-gray-700 mb-4">SYMBOL</h3>
-
-              {/* Input/Output */}
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="bg-blue-200 text-blue-800 px-3 py-1 rounded-md">Input</div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <button className="text-gray-500" aria-label="Decrease input count">-</button>
-                    <span>0</span>
-                    <button className="text-gray-500" aria-label="Increase input count">+</button>
-                    <input type="checkbox" className="ml-2" defaultChecked />
-                    <label className="text-sm text-gray-600">Unlimited</label>
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="bg-green-200 text-green-800 px-3 py-1 rounded-md">Output</div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <button className="text-gray-500" aria-label="Decrease output count">-</button>
-                    <span>0</span>
-                    <button className="text-gray-500" aria-label="Increase output count">+</button>
-                    <input type="checkbox" className="ml-2" defaultChecked />
-                    <label className="text-sm text-gray-600">Unlimited</label>
-                  </div>
-                </div>
-              </div>
-
-              {/* Variables */}
-              <div className="mt-6">
-                <h4 className="text-sm font-medium text-gray-700 mb-2">VARIABLES</h4>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div className="bg-yellow-200 text-yellow-800 px-3 py-1 rounded-md">Declare</div>
-                    <div className="flex items-center gap-2">
-                      <button className="text-gray-500" aria-label="Decrease declare count">-</button>
-                      <span>0</span>
-                      <button className="text-gray-500" aria-label="Increase declare count">+</button>
-                      <input type="checkbox" className="ml-2" defaultChecked />
-                      <label className="text-sm text-gray-600">Unlimited</label>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div className="bg-yellow-200 text-yellow-800 px-3 py-1 rounded-md">Assign</div>
-                    <div className="flex items-center gap-2">
-                      <button className="text-gray-500" aria-label="Decrease assign count">-</button>
-                      <span>0</span>
-                      <button className="text-gray-500" aria-label="Increase assign count">+</button>
-                      <input type="checkbox" className="ml-2" defaultChecked />
-                      <label className="text-sm text-gray-600">Unlimited</label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Control */}
-              <div className="mt-6">
-                <h4 className="text-sm font-medium text-gray-700 mb-2">CONTROL</h4>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div className="bg-pink-200 text-pink-800 px-3 py-1 rounded-md">IF</div>
-                    <div className="flex items-center gap-2">
-                      <button className="text-gray-500" aria-label="Decrease IF count">-</button>
-                      <span>5</span>
-                      <button className="text-gray-500" aria-label="Increase IF count">+</button>
-                      <input type="checkbox" className="ml-2" />
-                      <label className="text-sm text-gray-600">Unlimited</label>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div className="bg-purple-200 text-purple-800 px-3 py-1 rounded-md">Call</div>
-                    <div className="flex items-center gap-2">
-                      <button className="text-gray-500" aria-label="Decrease call count">-</button>
-                      <span>2</span>
-                      <button className="text-gray-500" aria-label="Increase call count">+</button>
-                      <input type="checkbox" className="ml-2" />
-                      <label className="text-sm text-gray-600">Unlimited</label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <SymbolSection onChange={handleSymbolChange} />
           </div>
         </div>
       </div>
