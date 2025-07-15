@@ -1,7 +1,7 @@
 "use client"; // ระบุว่าเป็น client component สำหรับ Next.js App Router
 
 import React, { useState } from "react";
-import { FaFileAlt } from "react-icons/fa";
+import { FaFileAlt, FaExternalLinkAlt, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import Sidebar from "@/components/Sidebar";
 import Navbar from "@/components/Navbar";
 
@@ -12,8 +12,17 @@ interface Submission {
   score: string;
 }
 
+// กำหนดประเภทสำหรับ testcase
+interface Testcase {
+  no: number;
+  input: string;
+  output: number;
+  score: number;
+  status: boolean;
+}
+
 function Lab() {
-  // State สำหรับ submissions (สามารถเปลี่ยนเป็น API data ได้ในอนาคต)
+  // State สำหรับ submissions
   const [submissions] = useState<Submission[]>([
     { studentID: "66015445", name: "Zaire Geidt", score: "8/11" },
     { studentID: "66015555", name: "Gretchen Madsen", score: "8/11" },
@@ -21,10 +30,30 @@ function Lab() {
     { studentID: "66015355", name: "Ahmad Schiefer", score: "8/11" },
   ]);
 
-  // Handler สำหรับปุ่ม Edit และไอคอน ✏️
+  // State สำหรับการเปิด/ปิด Modal และข้อมูลนักเรียนที่เลือก
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedSubmission, setSelectedSubmission] = useState<Submission | null>(null);
+
+  // ข้อมูล Testcase (สมมติข้อมูล)
+  const testcases: Testcase[] = [
+    { no: 1, input: "x", output: 10, score: 4, status: true },
+    { no: 2, input: "b", output: 20, score: 4, status: true },
+    { no: 3, input: "y", output: 30, score: 0, status: false },
+  ];
+
+  // Handler สำหรับปุ่ม Edit และไอคอน ↗️
   const handleEditClick = (studentID: string) => {
-    console.log(`Edit score for student: ${studentID}`);
-    // เพิ่ม logic สำหรับแก้ไขคะแนน
+    const submission = submissions.find((s) => s.studentID === studentID);
+    if (submission) {
+      setSelectedSubmission(submission);
+      setIsModalOpen(true);
+    }
+  };
+
+  // Handler สำหรับปิด Modal
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedSubmission(null);
   };
 
   return (
@@ -32,11 +61,11 @@ function Lab() {
       <Navbar />
       <div className="flex h-screen">
         <Sidebar />
-        <div className="flex-1 flex flex-col p-6 md:p-20"> {/* ปรับ padding สำหรับ responsive */}
+        <div className="flex-1 flex flex-col p-6 md:p-20">
           {/* Buttons (Edit) */}
           <div className="flex justify-end space-x-4 mb-6">
             <button
-              onClick={() => handleEditClick("all")} // สามารถปรับให้แก้ไขทั้งหมด
+              onClick={() => handleEditClick("all")}
               className="bg-blue-600 text-white px-4 py-2 rounded-full flex items-center hover:bg-blue-700"
               aria-label="Edit all submissions"
             >
@@ -72,7 +101,7 @@ function Lab() {
           </div>
 
           {/* Wrapper to shift Description and Table */}
-          <div className="ml-0 md:ml-10"> {/* ปรับ margin สำหรับ responsive */}
+          <div className="ml-0 md:ml-10">
             {/* Description */}
             <p className="mb-6 text-gray-700">
               รายวิชาการเขียนโปรแกรมคอมพิวเตอร์ 1 คะแนนเก็บ ครั้งที่ 1 ทำ N ครั้งตามที่กำหนด
@@ -82,29 +111,29 @@ function Lab() {
             <div className="border-b-2 border-gray-300 pb-1 mb-6"></div>
 
             {/* Table of Submissions */}
-            <table className="w-full border-collapse bg-white shadow-md rounded-lg">
+            <table className="w-full bg-white shadow-md rounded-lg">
               <thead>
                 <tr className="bg-gray-100">
-                  <th className="border p-2 text-left text-gray-700">No</th>
-                  <th className="border p-2 text-left text-gray-700">StudentID</th>
-                  <th className="border p-2 text-left text-gray-700">Name</th>
-                  <th className="border p-2 text-left text-gray-700">Score</th>
+                  <th className="p-2 text-left text-gray-700">No</th>
+                  <th className="p-2 text-left text-gray-700">StudentID</th>
+                  <th className="p-2 text-left text-gray-700">Name</th>
+                  <th className="p-2 text-left text-gray-700">Score</th>
                 </tr>
               </thead>
               <tbody>
                 {submissions.map((submission, index) => (
-                  <tr key={submission.studentID} className="border hover:bg-gray-50">
-                    <td className="border p-2">{index + 1}</td>
-                    <td className="border p-2">{submission.studentID}</td>
-                    <td className="border p-2">{submission.name}</td>
-                    <td className="border p-2 flex items-center">
+                  <tr key={submission.studentID} className="hover:bg-gray-50">
+                    <td className="p-2">{index + 1}</td>
+                    <td className="p-2">{submission.studentID}</td>
+                    <td className="p-2">{submission.name}</td>
+                    <td className="p-2 flex items-center">
                       {submission.score}
                       <button
                         onClick={() => handleEditClick(submission.studentID)}
-                        className="ml-2 text-blue-500 hover:text-blue-700"
+                        className="ml-2 text-gray-500 hover:text-gray-700"
                         aria-label={`Edit score for ${submission.name}`}
                       >
-                        ✏️
+                        <FaExternalLinkAlt />
                       </button>
                     </td>
                   </tr>
@@ -113,6 +142,54 @@ function Lab() {
             </table>
           </div>
         </div>
+
+        {/* Modal */}
+        {isModalOpen && selectedSubmission && (
+          <div className="fixed inset-0 bg-gray-900/20 backdrop-blur-md flex items-center justify-center z-[1000]">
+            <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+              <h2 className="text-xl font-semibold mb-4">Score per Testcase</h2>
+              <p className="mb-2">
+                {selectedSubmission.name} ({selectedSubmission.studentID}@kmitl.ac.th)
+              </p>
+              <table className="w-full mb-4">
+                <thead>
+                  <tr className="bg-gray-100">
+                    <th className="p-2 text-left text-gray-700">No</th>
+                    <th className="p-2 text-left text-gray-700">Input</th>
+                    <th className="p-2 text-left text-gray-700">Output</th>
+                    <th className="p-2 text-left text-gray-700">Score</th>
+                    <th className="p-2 text-left text-gray-700">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {testcases.map((testcase) => (
+                    <tr key={testcase.no} className="hover:bg-gray-50">
+                      <td className="p-2">{testcase.no}</td>
+                      <td className="p-2">{testcase.input}</td>
+                      <td className="p-2">{testcase.output}</td>
+                      <td className="p-2">{testcase.score}</td>
+                      <td className="p-2">
+                        {testcase.status ? (
+                          <FaCheckCircle className="text-green-500" />
+                        ) : (
+                          <FaTimesCircle className="text-red-500" />
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <div className="flex justify-center">
+                <button
+                  onClick={handleCloseModal}
+                  className="bg-red-600 text-white px-4 py-2 rounded-full hover:bg-red-700"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

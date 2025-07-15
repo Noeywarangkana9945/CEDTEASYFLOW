@@ -1,5 +1,12 @@
 "use client";
-function ClassCard({ code = '', teacher = '', due = '', problem = '' }) {
+interface ClassCardProps {
+  code?: string;
+  teacher?: string;
+  due?: string;
+  problem?: string;
+}
+
+function ClassCard({ code = '', teacher = '', due = '', problem = '' }: ClassCardProps) {
   return (
     <div className="bg-white shadow-md rounded-lg overflow-hidden hover:scale-105 transition-all cursor-pointer">
       <div className="bg-orange-500 text-white p-4">
@@ -24,4 +31,5 @@ function ClassCard({ code = '', teacher = '', due = '', problem = '' }) {
     </div>
   );
 }
+
 export default ClassCard;
