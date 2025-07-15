@@ -20,6 +20,7 @@ import WhileNode from "./_components/WhileNode";
 import InputNode from "./_components/InputNode";
 import DefaultNode from "./_components/DefaultNode";
 import IfNode from "./_components/IfNode";
+import TopBarControls from "./_components/TopBarControls";
 
 const nodeTypes = {
   if: IfNode,
@@ -87,6 +88,9 @@ function Dolab() {
     <div className="pt-20 min-h-screen bg-gray-100">
       <Navbar />
       <div className="relative w-full h-[100vh]">
+        <div className="mt-4 ml-2">
+          <TopBarControls/>
+        </div>
         <ReactFlow
           nodes={nodes}
           edges={edges}
@@ -100,6 +104,7 @@ function Dolab() {
           <MiniMap />
           <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
         </ReactFlow>
+        
 
         {selectedNodeId && (
           <div className="absolute top-24 right-4 bg-white shadow-md rounded p-4 z-50">
@@ -116,7 +121,9 @@ function Dolab() {
             ))}
           </div>
         )}
+        
       </div>
+      
     </div>
   );
 }
