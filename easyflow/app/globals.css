@@ -24,3 +24,10 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* หรือจะลบเฉพาะ input node */
+.react-flow__node-input {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
