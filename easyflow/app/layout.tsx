@@ -1,17 +1,19 @@
-// easyflow/app/layout.tsx
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers"; // ✅ import ตัวใหม่
 
+// กำหนดฟอนต์โดยไม่ให้เกิดผลกระทบต่อ hydration
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  display: "swap", // ช่วยให้ฟอนต์โหลดแบบไม่บล็อกการ render
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -28,6 +30,7 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        suppressHydrationWarning // เพิ่มเพื่อซ่อน warning ชั่วคราวในการ debug
       >
         <Providers>{children}</Providers>
       </body>

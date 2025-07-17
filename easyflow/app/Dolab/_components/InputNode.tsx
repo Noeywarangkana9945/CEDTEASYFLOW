@@ -1,25 +1,29 @@
-import React from "react";
-import { Handle, Position } from "@xyflow/react";
+import React from 'react';
+import { Handle, Position, NodeProps } from '@xyflow/react';
 
-export default function InputNode({ data }: any) {
+const InputNode: React.FC<{ data: { label: string } }> = ({ data }) => {
   return (
-    <div className="relative w-[140px] bg-blue-200 border border-gray-700 text-center px-4 py-2 rounded-md">
-      {/* จุดเชื่อมด้านบน */}
-      <Handle
-        type="target"
-        position={Position.Top}
-        className="!absolute left-1/2 -translate-x-1/2 -top-2"
-      />
-
-      {/* ข้อความ */}
-      {data.label || "Input"}
-
-      {/* จุดเชื่อมด้านล่าง */}
-      <Handle
-        type="source"
-        position={Position.Bottom}
-        className="!absolute left-1/2 -translate-x-1/2 -bottom-2"
-      />
+    <div
+      className="bg-blue-200 border border-blue-500 rounded p-2 shadow-md"
+      style={{
+        width: '150px', // Match default React Flow node width
+        minHeight: '36px', // Approximate height for single-line text
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: '12px', // Match default font size
+        lineHeight: '1.5', // Ensure text alignment consistency
+        boxSizing: 'border-box',
+        transform: 'skewX(-20deg)', // Apply skew to create parallelogram shape
+        transformOrigin: 'center', // Ensure skew is centered
+      }}
+    >
+      {/* Counter-skew the content to keep text upright */}
+      <div style={{ transform: 'skewX(20deg)' }}>{data.label}</div>
+      <Handle type="target" position={Position.Top} />
+      <Handle type="source" position={Position.Bottom} />
     </div>
   );
-}
+};
+
+export default InputNode;
