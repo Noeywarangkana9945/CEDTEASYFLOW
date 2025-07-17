@@ -9,7 +9,7 @@ export default function TopBarControls() {
   const togglePopup = () => setShowPopup((v) => !v);
 
   return (
-    <div className="relative">
+    <div className="absolute z-1 pt-4">
       <div className="flex items-center gap-2 px-3 py-2 bg-white rounded-lg shadow-md border border-gray-200 w-fit hover:shadow-lg transition-shadow duration-200">
         <button className="text-green-600 hover:text-green-700 text-lg p-2 rounded-full hover:bg-green-100 transition-colors">
           <FaPlay />
