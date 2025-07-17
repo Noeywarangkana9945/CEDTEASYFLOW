@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useState, useRef } from "react";
+import React, { useCallback, useState, useRef, useEffect } from "react";
 import {
   ReactFlow,
   MiniMap,
@@ -25,28 +25,14 @@ import InputNode from "./_components/InputNode";
 import DefaultNode from "./_components/DefaultNode";
 import IfNode from "./_components/IfNode";
 import TopBarControls from "./_components/TopBarControls";
+import NodePalette from "./_components/menu";
 
 // Constants
 const START_NODE_ID = "1";
 const END_NODE_ID = "2";
 const FIXED_X = 200;
 const VERTICAL_GAP = 120;
-
-// Node Templates
-const nodeTemplates = [
-  { label: "Input", type: "input", color: "#a6dcef" },
-  { label: "While", type: "while", color: "#ffd89c" },
-  { label: "If", type: "if", color: "#f7d6e0" },
-  { label: "Default", type: "default", color: "#ccc" },
-];
-
-// Custom Node Types
-const nodeTypes = {
-  if: IfNode,
-  while: WhileNode,
-  input: InputNode,
-  default: DefaultNode,
-};
+const CANVAS_OFFSET_X = 50; // Approximate initial canvas offset
 
 // Initial Nodes and Edges
 const initialNodes: Node[] = [
@@ -89,6 +75,7 @@ function Dolab() {
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
 
   const reactFlowInstance = useRef<ReactFlowInstance | null>(null);
+  const reactFlowWrapper = useRef<HTMLDivElement>(null);
 
   const onInit = useCallback((rfi: ReactFlowInstance) => {
     reactFlowInstance.current = rfi;
@@ -102,8 +89,16 @@ function Dolab() {
 
   const onNodeClick = useCallback((event: React.MouseEvent, node: Node) => {
     event.preventDefault();
-    setSelectedNodeId(node.id);
-  }, []);
+    if (node.id === END_NODE_ID) {
+      setSelectedNodeId(null);
+      return;
+    }
+    if (selectedNodeId === node.id) {
+      setSelectedNodeId(null); // Close menu if re-clicking the same node
+    } else {
+      setSelectedNodeId(node.id); // Open menu for a different node
+    }
+  }, [selectedNodeId]);
 
   const handleAddNodeFromPalette = (label: string, type: string) => {
     if (!selectedNodeId) return;
@@ -168,8 +163,29 @@ function Dolab() {
     }
   };
 
+  const getNodePosition = (nodeId: string) => {
+    const node = nodes.find((n) => n.id === nodeId);
+    if (node) {
+      return { x: node.position.x + CANVAS_OFFSET_X, y: node.position.y };
+    }
+    return { x: 0, y: 0 };
+  };
+
+  const handleClickOutside = useCallback((event: MouseEvent) => {
+    if (reactFlowWrapper.current && !reactFlowWrapper.current.contains(event.target as Node)) {
+      setSelectedNodeId(null);
+    }
+  }, []);
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [handleClickOutside]);
+
   return (
-    <div className="pt-20 min-h-screen bg-gray-100">
+    <div className="pt-20 min-h-screen bg-gray-100 relative" style={{ position: "relative" }} ref={reactFlowWrapper}>
       <Navbar />
       <div className="relative w-full h-[100vh]">
 
@@ -186,7 +202,12 @@ function Dolab() {
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
           onNodeClick={onNodeClick}
-          nodeTypes={nodeTypes}
+          nodeTypes={{
+            if: IfNode,
+            while: WhileNode,
+            input: InputNode,
+            default: DefaultNode,
+          }}
           fitView
           onInit={onInit}
           defaultEdgeOptions={{
@@ -218,39 +239,13 @@ function Dolab() {
         </ReactFlow>
 
         {/* Node Palette */}
-        {selectedNodeId && (() => {
-          const selectedNode = nodes.find((n) => n.id === selectedNodeId);
-          if (!selectedNode || selectedNode.data.label === "End") return null;
-
-          return (
-            <div className="fixed top-24 right-6 bg-white shadow-lg rounded-md p-4 z-50 w-48" style={{ userSelect: "none" }}>
-              <p className="font-semibold mb-3 text-center text-gray-700">
-                ➕ เพิ่ม Node จาก {selectedNodeId}
-              </p>
-              <div className="flex flex-col gap-2">
-                {nodeTemplates.map(({ label, type, color }) => (
-                  <button
-                    key={label}
-                    onClick={() => handleAddNodeFromPalette(label, type)}
-                    className="rounded-md px-3 py-2 font-medium text-gray-800 hover:text-white hover:shadow-md transition-colors duration-200"
-                    style={{
-                      backgroundColor: color,
-                      boxShadow: `0 2px 6px ${color}88`,
-                    }}
-                  >
-                    {label}
-                  </button>
-                ))}
-              </div>
-              <button
-                onClick={() => setSelectedNodeId(null)}
-                className="mt-4 w-full text-center text-red-600 font-semibold hover:text-red-800"
-              >
-                ปิด
-              </button>
-            </div>
-          );
-        })()}
+        {selectedNodeId && selectedNodeId !== END_NODE_ID && (
+          <NodePalette
+            selectedNodeId={selectedNodeId}
+            nodes={nodes}
+            handleAddNodeFromPalette={handleAddNodeFromPalette}
+          />
+        )}
       </div>
     </div>
   );
