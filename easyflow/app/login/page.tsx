@@ -1,5 +1,6 @@
 "use client";
 import Navbar from "@/components/Navbar";
+import { signIn } from "next-auth/react";
 
 function Login() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -80,7 +81,14 @@ function Login() {
           </div>
 
           <div className="flex justify-center gap-4 mt-6">
-            <button className="p-2 bg-white/20 rounded-full shadow hover:shadow-lg">
+            <button
+              onClick={() => {
+                console.log("Clicked signIn Google");
+                signIn("google", { callbackUrl: "/profile" });
+              }}
+              className="p-2 bg-white/20 rounded-full shadow hover:shadow-lg"
+              aria-label="Login with Google"
+            >
               <img src="https://www.google.com/favicon.ico" alt="Google" className="w-6 h-6" />
             </button>
             <button className="p-2 bg-white/20 rounded-full shadow hover:shadow-lg">
