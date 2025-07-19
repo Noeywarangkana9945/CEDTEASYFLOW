@@ -31,6 +31,7 @@ export default function Profile() {
   }
 
   // ดึงข้อมูล user จาก session และปรับขนาดรูปให้ชัด
+  console.log("Session:", session, "Status:", status);
   const user = session.user;
   const defaultImage = "https://img5.pic.in.th/file/secure-sv1/Ellipse-270.png";
   const userImage =
@@ -54,7 +55,7 @@ export default function Profile() {
                 />
                 <h2 className="mt-4 text-3xl font-semibold text-gray-900">{user?.name ?? "No Name"}</h2>
                 <div className="mt-2 w-64 h-px bg-gray-300" />
-                <p className="text-gray-600 text-lg">Email: {user?.email ?? "No Email"}</p>
+                <p className="text-gray-600 text-lg">Email: {session?.user?.email}</p>
                 <p className="mt-4 text-2xl text-gray-800">รายละเอียด แพ็คเก็ต</p>
               </div>
             </div>
