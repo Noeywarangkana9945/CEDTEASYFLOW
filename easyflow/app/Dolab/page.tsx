@@ -1,186 +1,145 @@
-'use client';
-import { ReactFlow, Background, Controls, Node, Edge, BackgroundVariant, useNodesState, useEdgesState, Connection, addEdge, NodeTypes } from '@xyflow/react';
-import '@xyflow/react/dist/style.css';
-import Navbar from '@/components/Navbar';
-import TopBarControls from './_components/TopBarControls';
-import FloatingPanel from './_components/FloatingPanel';
-import InputNode from './_components/InputNode';
-import { useState, useCallback } from 'react';
+"use client";
+import React, { useEffect, useState, useCallback } from "react";
+import {
+  ReactFlow,
+  addEdge,
+  Background,
+  Controls,
+  MiniMap,
+  useNodesState,
+  useEdgesState,
+  Connection,
+  Node,
+  Edge,
+} from "@xyflow/react";
+import "@xyflow/react/dist/style.css";
 
-const initialNodes: Node[] = [
-  {
-    id: 'n1',
-    position: { x: 50, y: 0 },
-    data: { label: 'Start' },
-    draggable: false,
-  },
-  {
-    id: 'n2',
-    position: { x: 50, y: 100 },
-    data: { label: 'End' },
-    draggable: false,
-  },
-];
+import { getFlowchart, saveFlowchart } from "../api/flowchartApi";
+import { v4 as uuidv4 } from "uuid";
 
-const initialEdges: Edge[] = [
-  {
-    id: 'e1-2',
-    source: 'n1',
-    target: 'n2',
-    markerEnd: { type: 'arrowclosed' },
-  },
-];
-
-const nodeTypes: NodeTypes = {
-  inputNode: InputNode,
+type Props = {
+  flowchartId: string;
 };
 
-export default function Dolab() {
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-  const [isPanelOpen, setIsPanelOpen] = useState(false);
-  const [panelPosition, setPanelPosition] = useState({ x: 0, y: 0 });
-  const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
+const FlowchartEditor: React.FC<Props> = ({ flowchartId }) => {
+  const [flowchartName, setFlowchartName] = useState("My Flowchart");
+  const [description, setDescription] = useState("This is a sample flowchart");
+
+  const [nodes, setNodes, onNodesChange] = useNodesState<Node[]>([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState<Edge[]>([]);
 
   const onConnect = useCallback(
     (connection: Connection) =>
       setEdges((eds) =>
-        addEdge({ ...connection, markerEnd: { type: 'arrowclosed' } }, eds)
+        addEdge({ ...connection, animated: true, label: "Edge" }, eds)
       ),
     [setEdges]
   );
 
-  const onNodeClick = useCallback((event: React.MouseEvent, node: Node) => {
-    if (node.id === 'n1' || node.type === 'inputNode') {
-      const rect = event.currentTarget.getBoundingClientRect();
-      setPanelPosition({ x: rect.right + 10, y: rect.top + window.scrollY });
-      setIsPanelOpen(true);
-      setSelectedNodeId(node.id);
-    } else {
-      setIsPanelOpen(false);
-      setSelectedNodeId(null);
+  const addNode = () => {
+    const newNode: Node = {
+      id: uuidv4(),
+      data: { label: "New Node" },
+      position: { x: Math.random() * 400, y: Math.random() * 400 },
+      type: "default",
+    };
+    setNodes((nds) => [...nds, newNode]);
+  };
+
+  const handleSave = async () => {
+    const payload = {
+      flowchartID: flowchartId,
+      name: flowchartName,
+      description: description,
+      nodes: nodes.map((n) => ({
+        id: n.id,
+        flowchartid: flowchartId,
+        type: n.type ?? "default",
+        label: typeof n.data.label === "string" ? n.data.label : "Node",
+        x: n.position.x,
+        y: n.position.y,
+      })),
+      edges: edges.map((e) => ({
+        id: e.id,
+        flowchartid: flowchartId,
+        from: e.source,
+        to: e.target,
+        label: e.label ?? "",
+      })),
+    };
+
+    try {
+      await saveFlowchart(payload);
+      alert("Saved!");
+    } catch (error) {
+      console.error("Save failed:", error);
+      alert("Error saving flowchart");
     }
-  }, []);
+  };
 
-  const addInputNode = useCallback(() => {
-    if (!selectedNodeId) return;
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const data = await getFlowchart(flowchartId);
+        setFlowchartName(data.name);
+        setDescription(data.description);
 
-    const startNode = nodes.find((node) => node.id === 'n1');
-    const endNode = nodes.find((node) => node.id === 'n2');
-    const selectedNode = nodes.find((node) => node.id === selectedNodeId);
+        const loadedNodes: Node[] = data.nodes.map((n: any) => ({
+          id: n.id,
+          type: n.type,
+          position: { x: n.x, y: n.y },
+          data: { label: n.label },
+        }));
 
-    if (startNode && endNode && selectedNode) {
-      // กำหนดระยะห่างคงที่ระหว่างโหนด (เช่น 80 พิกเซล)
-      const nodeSpacing = 80;
+        const loadedEdges: Edge[] = data.edges.map((e: any) => ({
+          id: e.id,
+          source: e.from,
+          target: e.to,
+          label: e.label,
+          animated: true,
+        }));
 
-      // สร้างโหนด Input ใหม่
-      const newNodeId = `input-${Date.now()}`;
-      const newNode: Node = {
-        id: newNodeId,
-        type: 'inputNode',
-        position: { x: startNode.position.x, y: 0 }, // y จะถูกปรับในขั้นตอนถัดไป
-        data: { label: 'Input' },
-        draggable: false,
-      };
+        setNodes(loadedNodes);
+        setEdges(loadedEdges);
+      } catch (error) {
+        console.log("No existing flowchart. Starting new.");
+      }
+    };
 
-      // ดึงลำดับโหนด Input ที่เชื่อมต่อจาก Start ถึง End
-      const inputNodes = nodes
-        .filter((node) => node.type === 'inputNode')
-        .sort((a, b) => a.position.y - b.position.y);
-
-      // หาตำแหน่งของ selectedNode ในลำดับ
-      const selectedNodeIndex = selectedNode.id === 'n1' ? -1 : inputNodes.findIndex((node) => node.id === selectedNodeId);
-
-      // แทรกโหนดใหม่หลัง selectedNode
-      const updatedInputNodes = [
-        ...inputNodes.slice(0, selectedNodeIndex + 1),
-        newNode,
-        ...inputNodes.slice(selectedNodeIndex + 1),
-      ];
-
-      // ปรับตำแหน่ง y ของโหนด Input และ End
-      const updatedNodes = [
-        startNode, // Start node คงที่
-        ...updatedInputNodes.map((node, index) => ({
-          ...node,
-          position: { x: node.position.x, y: startNode.position.y + (index + 1) * nodeSpacing },
-        })),
-        {
-          ...endNode,
-          position: { x: endNode.position.x, y: startNode.position.y + (updatedInputNodes.length + 1) * nodeSpacing },
-        },
-      ];
-
-      // ลบ edge เดิมระหว่าง selectedNode และ End
-      const edgeToRemove = edges.find(
-        (edge) => edge.source === selectedNodeId && edge.target === 'n2'
-      );
-      const newEdges = edgeToRemove
-        ? edges.filter((edge) => edge.id !== edgeToRemove.id)
-        : edges;
-
-      // เพิ่ม edge ใหม่: selectedNode -> newNode และ newNode -> End
-      const newEdge1: Edge = {
-        id: `${selectedNodeId}-${newNodeId}`,
-        source: selectedNodeId,
-        target: newNodeId,
-        markerEnd: { type: 'arrowclosed' },
-      };
-      const newEdge2: Edge = {
-        id: `${newNodeId}-2`,
-        source: newNodeId,
-        target: 'n2',
-        markerEnd: { type: 'arrowclosed' },
-      };
-
-      // อัปเดต nodes และ edges
-      setNodes(updatedNodes);
-      setEdges([...newEdges, newEdge1, newEdge2]);
-    }
-
-    setIsPanelOpen(false);
-    setSelectedNodeId(null);
-  }, [nodes, edges, setNodes, setEdges, selectedNodeId]);
+    loadData();
+  }, [flowchartId]);
 
   return (
-    <div className="pt-16 min-h-screen bg-gray-100 ">
-      <Navbar />
-      <div className="relative w-full ">
-        <div className="mt-4 ml-2">
-          <TopBarControls />
+    <div style={{ width: "100%", height: "100vh" }}>
+      <div className="p-2 bg-gray-100 flex justify-between">
+        <div>
+          <h2 className="text-xl font-semibold">{flowchartName}</h2>
+          <p className="text-sm text-gray-500">{description}</p>
         </div>
-        <div style={{ height: 'calc(100vh - 5rem)', width: '100%' }}>
-          <ReactFlow
-            nodes={nodes}
-            edges={edges}
-            onNodesChange={onNodesChange}
-            onEdgesChange={onEdgesChange}
-            onConnect={onConnect}
-            onNodeClick={onNodeClick}
-            nodeTypes={nodeTypes}
-            fitView
-          >
-            <Background
-              variant={BackgroundVariant.Cross}
-              color="#b0bec5"
-              gap={10}
-              size={1.5}
-              style={{ background: '#ffffff' }}
-            />
-            <Controls />
-          </ReactFlow>
+        <div>
+          <button onClick={addNode} className="px-3 py-1 bg-blue-500 text-white rounded mr-2">
+            + Add Node
+          </button>
+          <button onClick={handleSave} className="px-3 py-1 bg-green-600 text-white rounded">
+            💾 Save
+          </button>
         </div>
       </div>
-      <FloatingPanel
-        isOpen={isPanelOpen}
-        x={panelPosition.x}
-        y={panelPosition.y}
-        onClose={() => {
-          setIsPanelOpen(false);
-          setSelectedNodeId(null);
-        }}
-        onAddInputNode={addInputNode}
-      />
+
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        onConnect={onConnect}
+        fitView
+      >
+        <Background />
+        <MiniMap />
+        <Controls />
+      </ReactFlow>
     </div>
   );
-}
+};
+
+export default FlowchartEditor;
