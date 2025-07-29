@@ -16,6 +16,7 @@ import "@xyflow/react/dist/style.css";
 
 import { getFlowchart, saveFlowchart } from "../api/flowchartApi";
 import Navbar from "@/components/Navbar";
+import TopBarControls from "./_components/TopBarControls";
 import { v4 as uuidv4 } from "uuid";
 
 type Props = {
@@ -130,7 +131,10 @@ const FlowchartEditor: React.FC<Props> = ({ flowchartId }) => {
       </button>
     </div>
   </div>
-
+  {/* Controls bar */}
+        <div className="mt-4 ml-4">
+          <TopBarControls />
+        </div>
   {/* ReactFlow เต็มพื้นที่ที่เหลือ */}
   <div className="flex-1">
     <ReactFlow

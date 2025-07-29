@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import Sidebar from "@/components/Sidebar";
 import Navbar from "@/components/Navbar";
 import SymbolSection from "./_components/SymbolSection";
-
+import Link from "next/link";
 // กำหนดประเภทสำหรับ test case
 interface TestCase {
   input: string;
@@ -62,7 +62,7 @@ function Editlab() {
         <div className="flex-1 flex flex-col p-6 md:p-10">
           {/* Buttons (Cancel and Save) */}
           <div className="flex justify-end space-x-4 mb-6">
-            <button
+            <Link href="/mylab"
               onClick={handleCancel}
               className="bg-[#D21F3C] text-white px-4 py-2 rounded-full flex items-center hover:bg-[#B81C35]"
               aria-label="Cancel editing lab"
@@ -77,8 +77,8 @@ function Editlab() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
               </svg>
               Cancel
-            </button>
-            <button
+            </Link>
+            <Link href="/mylab"
               onClick={handleSave}
               className="bg-[#2E8B57] text-white px-4 py-2 rounded-full flex items-center hover:bg-[#267347]"
               aria-label="Save lab changes"
@@ -98,7 +98,7 @@ function Editlab() {
                 />
               </svg>
               Save
-            </button>
+            </Link>
           </div>
 
           {/* Title */}

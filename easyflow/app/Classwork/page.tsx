@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { FaPlus, FaCalendarAlt, FaClock } from "react-icons/fa";
-
+import Link from "next/link";
 import Sidebar from "@/components/Sidebar";
 import Navbar from "@/components/Navbar";
 import Tabs from "./_components/Tabs";
@@ -59,16 +59,17 @@ function Classwork() {
           <FilterActions onCreateClick={handleCreateClick} />
 
           {/* Assignments List */}
-          <div className="space-y-4">
-            {assignments.map((assignment, index) => (
-              <AssignmentItem
-                key={index}
-                title={assignment.title}
-                due={assignment.due}
-                onEditClick={() => console.log(`Edit assignment: ${assignment.title}`)} // เพิ่ม handler สำหรับ Edit
-              />
-            ))}
-          </div>
+            <div className="space-y-4">
+              {assignments.map((assignment, index) => (
+                <Link href="/-" key={index}>
+                  <AssignmentItem
+                    title={assignment.title}
+                    due={assignment.due}
+                    onEditClick={() => console.log(`Edit assignment: ${assignment.title}`)}
+                  />
+                </Link>
+              ))}
+            </div>
         </div>
       </div>
 
@@ -84,12 +85,12 @@ function Classwork() {
               {/* My lab Button */}
               <div>
                 <label className="block text-gray-700 mb-1">My lab</label>
-                <button
+                <Link href="/Selectlab"
                   onClick={handleAddClick}
                   className="w-28 h-12 border border-gray-300 rounded-lg flex items-center justify-center hover:bg-gray-100"
                 >
                   <FaPlus className="w-3 h-3 text-gray-500" />
-                </button>
+                </Link>
               </div>
 
               {/* Assignment due date */}
