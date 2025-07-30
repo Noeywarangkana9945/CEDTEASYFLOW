@@ -15,6 +15,8 @@ import {
 import "@xyflow/react/dist/style.css";
 
 import { getFlowchart, saveFlowchart } from "../api/flowchartApi";
+import Navbar from "@/components/Navbar";
+import TopBarControls from "./_components/TopBarControls";
 import { v4 as uuidv4 } from "uuid";
 
 type Props = {
@@ -110,35 +112,45 @@ const FlowchartEditor: React.FC<Props> = ({ flowchartId }) => {
   }, [flowchartId]);
 
   return (
-    <div style={{ width: "100%", height: "100vh" }}>
-      <div className="p-2 bg-gray-100 flex justify-between">
-        <div>
-          <h2 className="text-xl font-semibold">{flowchartName}</h2>
-          <p className="text-sm text-gray-500">{description}</p>
-        </div>
-        <div>
-          <button onClick={addNode} className="px-3 py-1 bg-blue-500 text-white rounded mr-2">
-            + Add Node
-          </button>
-          <button onClick={handleSave} className="px-3 py-1 bg-green-600 text-white rounded">
-            💾 Save
-          </button>
-        </div>
-      </div>
+    
+  <div className="flex flex-col h-screen w-screen overflow-hidden">
+  <Navbar />
 
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
-        fitView
-      >
-        <Background />
-        <MiniMap />
-        <Controls />
-      </ReactFlow>
+  {/* Header bar (ชื่อ flowchart + ปุ่ม) */}
+  <div className="p-2 bg-gray-100 flex justify-between shrink-0 mt-21">
+    <div>
+      <h2 className="text-xl font-semibold">{flowchartName}</h2>
+      <p className="text-sm text-gray-500">{description}</p>
     </div>
+    <div>
+      <button onClick={addNode} className="px-3 py-1 bg-blue-500 text-white rounded mr-2">
+        + Add Node
+      </button>
+      <button onClick={handleSave} className="px-3 py-1 bg-green-600 text-white rounded">
+        💾 Save
+      </button>
+    </div>
+  </div>
+  {/* Controls bar */}
+        <div className="mt-4 ml-4">
+          <TopBarControls />
+        </div>
+  {/* ReactFlow เต็มพื้นที่ที่เหลือ */}
+  <div className="flex-1">
+    <ReactFlow
+      nodes={nodes}
+      edges={edges}
+      onNodesChange={onNodesChange}
+      onEdgesChange={onEdgesChange}
+      onConnect={onConnect}
+      fitView
+    >
+      <Background />
+      <MiniMap />
+      <Controls />
+    </ReactFlow>
+  </div>
+</div>
   );
 };
 

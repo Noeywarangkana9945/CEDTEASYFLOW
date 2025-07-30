@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { FaFileAlt } from "react-icons/fa";
 import Sidebar from "@/components/Sidebar";
 import Navbar from "@/components/Navbar";
-
+import Link from "next/link";
 // Define TestCase interface
 interface TestCase {
   input: string;
@@ -45,7 +45,7 @@ function Labinfo() {
         <div className="flex-1 flex flex-col p-6 md:p-20"> {/* ปรับ padding สำหรับ responsive */}
           {/* Buttons (Edit) */}
           <div className="flex justify-end space-x-4 mb-6">
-            <button
+            <Link href="/editlab"
               
               className="bg-blue-600 text-white px-4 py-2 rounded-full flex items-center hover:bg-blue-700"
               aria-label="Edit all submissions"
@@ -65,7 +65,7 @@ function Labinfo() {
                 />
               </svg>
               Edit
-            </button>
+            </Link>
           </div>
 
                     {/* Title and Points with Icon */}

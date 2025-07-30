@@ -17,7 +17,7 @@ function Navbar() {
         />
       </div>
       <div className="flex items-center space-x-14">
-        <Link href="/" className="hover:underline hover:scale-105 transition-all cursor-pointer">
+        <Link href="/homepage" className="hover:underline hover:scale-105 transition-all cursor-pointer">
           Home
         </Link>
         <Link href="/mylab" className="hover:underline hover:scale-105 transition-all cursor-pointer">

@@ -5,7 +5,7 @@ import Navbar from '@/components/Navbar';
 import ClassCard from './_components/ClassCard';
 import ClassCard_Other from './_components/ClassCard_Other';
 import CreateClassModal from "./_components/CreateClassModal";
-
+import Link from "next/link";
 // Type definitions
 export type ClassItem = {
   code: string;
@@ -77,17 +77,17 @@ function Myclass() {
           </div>
 
           <h2 className="text-4xl font-semibold border-b-2 border-gray-300 pb-1 mb-4">My Class</h2>
-          <div className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {classes.length === 0 ? (
-              <p className="text-gray-500">You don't have any classes yet.</p>
-            ) : (
-              classes.map((classItem, index) => (
-                
-                  <ClassCard {...classItem} />
-                
-              ))
-            )}
-          </div>
+            <div className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {classes.length === 0 ? (
+                <p className="text-gray-500">You don't have any classes yet.</p>
+              ) : (
+                classes.map((classItem, index) => (
+                  <Link href="/Classwork" key={index}>
+                    <ClassCard {...classItem} />
+                  </Link>
+                ))
+              )}
+            </div>
 
           <h2 className="text-4xl font-semibold border-b-2 border-gray-300 pb-1 mt-8 mb-4">Class</h2>
           <div className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
